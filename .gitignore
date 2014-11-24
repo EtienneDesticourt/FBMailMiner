@@ -41,3 +41,10 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+.pydevproject
+.project
+.settings/org.eclipse.core.resources.prefs
+allfriends.html
+ProxyManager.pyc
+securityCheck.txt
