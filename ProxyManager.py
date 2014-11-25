@@ -18,12 +18,15 @@ class ProxyManager:
         self.currentProxy = 1
         self.path = savePath
         self.concurrent = concurrent
+    def getProxy(self):
+        proxy = {"http":"http://"+self.proxies[self.currentProxy]}
+        self.currentProxy += 1
+        if self.currentProxy >= len(self.proxies): self.currentProxy = 0
+        return proxy
     def proxyUp(self, Session):
         "Change proxy of the passed request Session."
         if len(self.proxies) == 0: raise ValueError("No proxies loaded.")
-        Session.proxies = {"http":"http://"+self.proxies[self.currentProxy]}
-        self.currentProxy += 1
-        if self.currentProxy >= len(self.proxies): self.currentProxy = 0
+        Session.proxies = self.getProxy()
     def checkProxy(self, url):
         "Checks to see if a proxy is still functionnal."
         s = requests.Session()
@@ -33,7 +36,7 @@ class ProxyManager:
             if r.status_code == 200:
                 return True
         except RequestException, socket.error: #Covers Connection, timeout, err 10054 exceptions and any other that should arise because of bad proxy
-            pass    
+            pass
         return False
     def checkProxiesThread(self, q, workingProxies):
         "Check all proxies and stores the working ones."

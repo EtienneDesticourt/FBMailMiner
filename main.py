@@ -5,8 +5,10 @@ Created on Nov 23, 2014
 from threading import Thread
 from Queue import Queue
 from ProxyManager import *
+from FriendMiner import  FriendMiner
 import requests, socket
 from requests.exceptions import RequestException
+from CaptchaSolver import CaptchaSolver
 
 #TODO:
 #get captcha
@@ -37,54 +39,37 @@ def parseFriends(path):
     return profileIDs
     
 
-def parseCaptchaLink(data):
-    data = data.split("https:\/\/www.facebook.com\/captcha\/")[1]
-    data = data.split("\\\" alt=")[0]
-    link = "https://www.facebook.com/captcha/"+data
-    return link
+
     
+def postCaptcha(link, solution):
+    pass
 
 
-def mineFriend(ID, PM, CS):
-    recoveryLink0 = "https://www.facebook.com/ajax/login/help/identify.php?ctx=recover&__a=1&email="
-    s = requests.Session()
-    ProxyManager.proxyUp(s)
-    try:
-        recoveryLink1 = s.get(recoveryLink0+ID, timeout = 5).text
-        if "Security Check" in recoveryLink1:
-            captchaLink = parseCaptchaLink(recoveryLink1)
-            solution = CS.solveCaptcha(ID, captchaLink )
-    except RequestException, socket.error:
-        pass
+
     
     
     
     
-def mineFriendList(friendList, friendQueue, ProxyManager, CaptchaSolver):
-    for ID in friendList:
-        friendQueue.put(ID)
-    friendQueue.join()
+
 
 def checkIP(PM):
     s = requests.Session()
     PM.proxyUp(s)
     print s.get("http://httpbin.org/ip").text
-def proxyUp(session):
-    pass
+
 
 def recoverMail():
     pass
 
 
-# PM = ProxyManager()
-# PM.loadProxies(fromFile = True, checkProxies=False)
+PM = ProxyManager()
+PM.loadProxies(fromFile = True, checkProxies=False)
+CS = CaptchaSolver()
+CS.startThread(PM)
+friendIDs = parseFriends(None)
+ 
+ 
+FM = FriendMiner()
+FM.mineFriends(friendIDs, PM, CS)
 
-# friendIDs = parseFriends(None)
-# print friendIDs
-# checkIP(PM)
 
-# mineFriendList(friendIDs, PM)
-# f = open("securityCheck.txt","r")
-# data = f.read()
-# f.close()
-# parseCaptchaLink(data)

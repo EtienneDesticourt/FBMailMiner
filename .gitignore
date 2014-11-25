@@ -48,3 +48,4 @@ Temporary Items
 allfriends.html
 ProxyManager.pyc
 securityCheck.txt
+*.pyc
